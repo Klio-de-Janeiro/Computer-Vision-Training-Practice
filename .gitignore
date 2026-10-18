@@ -1,0 +1,23 @@
+# Personal course material: notebook bodies, saved outputs, images and solutions.
+dist/local/
+dist/assets/
+*.ipynb
+*.pth
+*.pt
+
+# Personal progress and browser test artifacts.
+qa/
+debug.log
+*progress*.json
+playwright-report/
+test-results/
+
+# Build caches and downloaded package archives.
+__pycache__/
+*.pyc
+*.tgz
+node_modules/
+.venv/
+.env
+.env.*
+.publish/

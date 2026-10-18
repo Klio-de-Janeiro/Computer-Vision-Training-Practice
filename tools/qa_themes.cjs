@@ -1,0 +1,61 @@
+const {chromium}=require(process.argv[2]||'playwright');
+const {pathToFileURL}=require('node:url');
+const path=require('node:path');
+const fs=require('node:fs');
+const assert=require('node:assert/strict');
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:process.argv[3]||undefined});
+ const context=await browser.newContext({viewport:{width:1440,height:1100}});
+ const page=await context.newPage();
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(pathToFileURL(path.join(__dirname,'../dist/index.html')).href);
+ await page.locator('.lesson-card').first().waitFor();
+ assert.equal(await page.locator('html').getAttribute('data-theme'),'neon-dark');
+ fs.mkdirSync(path.join(__dirname,'../qa'),{recursive:true});
+ for(const theme of ['neon-dark','neon-light','classic']){
+   await page.locator('#theme-select').selectOption(theme);
+   assert.equal(await page.locator('html').getAttribute('data-theme'),theme);
+   await page.reload();await page.locator('.lesson-card').first().waitFor();
+   assert.equal(await page.locator('#theme-select').inputValue(),theme);
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+   await page.screenshot({path:path.join(__dirname,'../qa/'+theme+'.png')});
+   await page.setViewportSize({width:390,height:844});await page.waitForTimeout(250);
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,theme+' mobile overflow');
+   assert.equal(await page.locator('#theme-select').isVisible(),true);
+   await page.screenshot({path:path.join(__dirname,'../qa/'+theme+'-mobile.png')});
+   await page.setViewportSize({width:1440,height:1100});
+ }
+ // Theme switching is presentational and must not reset a draft or the study record.
+ await page.evaluate(()=>location.hash='#practice?type=open&lesson=4&count=5');
+ await page.locator('#practice-form button[type=submit]').click();await page.locator('#answer-text').waitFor();
+ await page.locator('#answer-text').fill('Сохранить мой ответ при смене оформления.');
+ const before=await page.evaluate(()=>JSON.stringify(state));
+ await page.locator('#theme-select').selectOption('neon-dark');
+ assert.equal(await page.locator('#answer-text').inputValue(),'Сохранить мой ответ при смене оформления.');
+ assert.equal(await page.evaluate(()=>JSON.stringify(state)),before);
+ await page.reload();await page.locator('#answer-text').waitFor();
+ assert.equal(await page.locator('#answer-text').inputValue(),'Сохранить мой ответ при смене оформления.');
+ assert.equal(await page.locator('#theme-select').inputValue(),'neon-dark');
+ await page.locator('[data-skip]').click();
+ await page.screenshot({path:path.join(__dirname,'../qa/neon-dark-question.png'),fullPage:true});
+ await page.locator('#theme-select').selectOption('neon-light');
+ await page.screenshot({path:path.join(__dirname,'../qa/neon-light-question.png'),fullPage:true});
+ await page.evaluate(()=>location.hash='#theory?lesson=4&topic=rope');
+ await page.locator('.formula').waitFor();
+ await page.locator('#theme-select').selectOption('neon-dark');
+ await page.screenshot({path:path.join(__dirname,'../qa/neon-dark-theory.png'),fullPage:true});
+ await page.evaluate(()=>location.hash='#source?path=lesson_4%2Fcv_lecture_4.ipynb&cell=22');
+ await page.locator('#cell-22').waitFor();
+ assert.ok(await page.locator('#cell-22').evaluate(el=>el.classList.contains('highlight')));
+ // A public checkout intentionally omits local notebooks; its study interface still works.
+ const publicPage=await context.newPage();
+ await publicPage.route('**/local/*.js',r=>r.abort());
+ await publicPage.goto(pathToFileURL(path.join(__dirname,'../dist/index.html')).href+'#source?path=lesson_4%2Fcv_lecture_4.ipynb&cell=22');
+ await publicPage.getByText('Подключите ваши локальные материалы').waitFor();
+ await publicPage.locator('#sidebar a.nav-link[href="#home"]').click();
+ await publicPage.locator('.lesson-card').first().waitFor();
+ assert.equal(await publicPage.locator('.lesson-card').count(),5);
+ assert.deepEqual(errors,[]);
+ await browser.close();
+ console.log('Theme checks passed: three palettes, persistence, desktop/mobile, draft preservation, notebook lazy loading and public fallback.');
+})().catch(e=>{console.error(e);process.exit(1)});
