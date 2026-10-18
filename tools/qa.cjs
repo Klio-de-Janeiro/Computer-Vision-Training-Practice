@@ -21,6 +21,14 @@ assert.deepEqual([1,2,3,4,5].map(i=>mixed.filter(q=>q.lesson===i).length),[3,3,3
 assert.equal(C.select(data.questions,{mode:'errors',count:'all'},{[data.questions[0].id]:{score:0}},[]).length,1);
 assert.throws(()=>C.validImport({version:1,records:{bad:{score:3}}},new Set(['bad']),new Set()));
 console.log('Core checks passed');
+for(const a of data.architectures){
+  const pool=C.select(data.questions,{architecture:a.id,count:'all'},{},[]);
+  assert.ok(pool.length>=30,a.title);
+  assert.ok(pool.every(q=>q.architecture===a.id&&q.lesson===a.lesson));
+  const saved=pool[0];
+  assert.deepEqual(C.select(data.questions,{architecture:a.id,mode:'saved',count:'all'},{},[saved.id]).map(q=>q.id),[saved.id]);
+}
+console.log('Architecture filters passed: all 11 banks, saved questions, minimum coverage');
 
 async function browserQA(){
   const {chromium}=require(process.argv[2]||'playwright');

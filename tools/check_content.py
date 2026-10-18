@@ -15,13 +15,16 @@ course=args.course
 assert len({t['id'] for t in topics})==len(topics)
 assert len({q['id'] for q in questions})==len(questions)
 ids={t['id'] for t in topics}
+notebooks={}
 for item in [*topics,*questions]:
     source=item['source']; path=course/source['path']
     if not course.is_dir():
         assert source['cells'] and all(isinstance(n,int) and n>=1 for n in source['cells'])
         continue
     assert path.is_file(), path
-    notebook=json.loads(path.read_text(encoding='utf-8'))
+    if path not in notebooks:
+        notebooks[path]=json.loads(path.read_text(encoding='utf-8'))
+    notebook=notebooks[path]
     for n in source['cells']:
         assert 1<=n<=len(notebook['cells']), (item['id'],n)
         assert ''.join(notebook['cells'][n-1]['source']).strip(),(item['id'],n)
@@ -41,4 +44,10 @@ for n in range(1,6):
 print('Content checks passed:',len(topics),'topics,',len(questions),'questions')
 print('By lesson:',dict(Counter(q['lesson'] for q in questions)))
 print('By format:',dict(Counter(q['type'] for q in questions)))
+architectures=data.get('ARCHITECTURES',[])
+counts=Counter(q.get('architecture') for q in questions)
+assert len(architectures)==11
+assert all(counts[a['id']]>=30 for a in architectures)
+assert len({q['prompt'].strip().casefold() for q in questions})==len(questions),'Repeated question wording'
+print('Architecture coverage:',{a['title']:counts[a['id']] for a in architectures})
 print('Notebook provenance:', 'checked against local files' if course.is_dir() else 'metadata only; pass --course PATH for local notebook checks')

@@ -1,5 +1,6 @@
 """Authored study notes and questions. Sources use 1-based notebook cell numbers."""
 import json
+import runpy
 from pathlib import Path
 
 LESSONS = [
@@ -632,8 +633,10 @@ CORRECTIONS = [
  {'lesson':5,'topic':'centernet','title':'Два разных CenterNet','text':'Текст ноутбука описывает Objects as Points (1904.07850), тогда как ссылка 1904.08189 — другая работа, Keypoint Triplets. Локальный поиск пиков heatmap отличается от bbox-IoU NMS.','url':'https://arxiv.org/abs/1904.07850'},
 ]
 
+ARCHITECTURES=runpy.run_path(str(Path(__file__).with_name('transformer_bank.py')))['extend'](TOPICS,QUESTIONS)
+
 if __name__ == '__main__':
     app=Path(__file__).resolve().parents[1]
-    payload={'version':1,'snapshotDate':'2026-10-18','lessons':LESSONS,'topics':TOPICS,'questions':QUESTIONS,'corrections':CORRECTIONS}
-    (app/'dist'/'content.js').write_text('window.CV_CONTENT = '+json.dumps(payload,ensure_ascii=False)+';\n',encoding='utf-8')
+    payload={'version':1,'snapshotDate':'2026-10-18','lessons':LESSONS,'topics':TOPICS,'questions':QUESTIONS,'corrections':CORRECTIONS,'architectures':ARCHITECTURES}
+    (app/'dist'/'content.js').write_text('window.CV_CONTENT = '+json.dumps(payload,ensure_ascii=False)+';\n',encoding='utf-8',newline='\n')
     print(f'{len(TOPICS)} study topics, {len(QUESTIONS)} questions')

@@ -14,6 +14,7 @@ jobs:
         with:
           node-version: '22'
       - run: python tools/check_content.py
+      - run: python tools/check_transformer_numbers.py
       - run: node tools/qa.cjs --core-only
       - run: node --check dist/app.js
       - run: node --check dist/themes.js
