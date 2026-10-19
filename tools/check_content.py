@@ -18,7 +18,8 @@ assert len({q['id'] for q in questions})==len(questions)
 ids={t['id'] for t in topics}
 notebooks={}
 implementations=[{'id':'code-'+t['id'],'source':t['implementation']['source']} for t in topics]
-for item in [*topics,*questions,*implementations]:
+diagrams=data['DIAGRAMS']
+for item in [*topics,*questions,*implementations,*diagrams]:
     source=item['source']; path=course/source['path']
     if not course.is_dir():
         assert source['cells'] and all(isinstance(n,int) and n>=1 for n in source['cells'])
@@ -50,6 +51,28 @@ for t in topics:
     assert t['implementation']['note'].strip(),t['id']
     ast.parse(t['implementation']['code'],filename=t['id']+'.py')
 print('Mathematical notes and Python syntax checked:',len(topics),'examples; worked LaTeX:',sum(q['type']=='number' for q in questions))
+assert len(diagrams)==40 and len({d['id'] for d in diagrams})==len(diagrams)
+for d in diagrams:
+    assert d['topic'] in ids and d['summary'].strip()
+    nodes={n['id']:n for n in d['nodes']}
+    assert len(nodes)==len(d['nodes'])
+    assert len({(n['col'],n['row']) for n in d['nodes']})==len(nodes)
+    assert all(n['title'] and n['hint'] and n['detail'] for n in nodes.values())
+    assert all(n['kind'] in ['block','input','output','loss'] for n in nodes.values())
+    assert all(isinstance(n['col'],int) and isinstance(n['row'],int) and n['col']>=0 and n['row']>=0 for n in nodes.values())
+    assert all(e['from'] in nodes and e['to'] in nodes and e['from']!=e['to'] for e in d['edges'])
+    assert all(e['kind'] in ['flow','skip','context','training'] for e in d['edges'])
+    incoming={key:sum(e['to']==key for e in d['edges']) for key in nodes}
+    queue=[key for key,n in incoming.items() if n==0];visited=[]
+    while queue:
+        key=queue.pop();visited.append(key)
+        for edge in d['edges']:
+            if edge['from']==key:
+                incoming[edge['to']]-=1
+                if incoming[edge['to']]==0:queue.append(edge['to'])
+    assert len(visited)==len(nodes),d['id']
+for t in topics:assert t['diagrams']==[d['id'] for d in diagrams if d['topic']==t['id']]
+print('Architecture diagrams checked:',len(diagrams),'graphs;',sum(len(d['nodes']) for d in diagrams),'blocks')
 print('By lesson:',dict(Counter(q['lesson'] for q in questions)))
 print('By format:',dict(Counter(q['type'] for q in questions)))
 architectures=data.get('ARCHITECTURES',[])

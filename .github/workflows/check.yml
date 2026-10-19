@@ -17,6 +17,8 @@ jobs:
       - run: python tools/check_transformer_numbers.py
       - run: node tools/qa.cjs --core-only
       - run: node tools/qa_math.cjs --formulas-only
+      - run: node tools/qa_diagrams.cjs --layout-only
+      - run: node --check dist/diagrams.js
       - run: node --check dist/app.js
       - run: node --check dist/themes.js
   examples:

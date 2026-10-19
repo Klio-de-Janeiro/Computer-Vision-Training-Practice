@@ -635,9 +635,10 @@ CORRECTIONS = [
 
 ARCHITECTURES=runpy.run_path(str(Path(__file__).with_name('transformer_bank.py')))['extend'](TOPICS,QUESTIONS)
 runpy.run_path(str(Path(__file__).with_name('math_notes.py')))['extend'](TOPICS,QUESTIONS)
+DIAGRAMS=runpy.run_path(str(Path(__file__).with_name('model_diagrams.py')))['build'](TOPICS)
 
 if __name__ == '__main__':
     app=Path(__file__).resolve().parents[1]
-    payload={'version':1,'snapshotDate':'2026-10-18','lessons':LESSONS,'topics':TOPICS,'questions':QUESTIONS,'corrections':CORRECTIONS,'architectures':ARCHITECTURES}
+    payload={'version':1,'snapshotDate':'2026-10-18','lessons':LESSONS,'topics':TOPICS,'questions':QUESTIONS,'corrections':CORRECTIONS,'architectures':ARCHITECTURES,'diagrams':DIAGRAMS}
     (app/'dist'/'content.js').write_text('window.CV_CONTENT = '+json.dumps(payload,ensure_ascii=False)+';\n',encoding='utf-8',newline='\n')
     print(f'{len(TOPICS)} study topics, {len(QUESTIONS)} questions')

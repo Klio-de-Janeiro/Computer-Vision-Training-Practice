@@ -17,6 +17,59 @@
 .architecture-card .actions{margin-top:auto;padding-top:8px}
 .architecture-card p{font-size:13px}
 .architecture-theory{margin:28px 0}
+.architecture-schemes{margin:28px 0 36px;min-width:0}
+.architecture-schemes .section-head{flex-wrap:wrap;gap:10px;align-items:center}
+.architecture-schemes .section-head h2{margin:0}
+.architecture-figure{margin:0;min-width:0}
+.architecture-figure figcaption h3{font-size:17px;line-height:1.5;margin:12px 0}
+.architecture-figure figcaption p{font-size:13px;line-height:1.8}
+.diagram-instruction{font-size:12px!important;color:var(--green);margin:14px 0!important}
+.diagram-viewport{overflow:auto;max-height:620px;border:1px solid var(--line);border-radius:10px;background:var(--paper);overscroll-behavior:contain;min-width:0}
+.model-diagram{display:block;margin:0 auto;font-family:"Segoe UI",Arial,sans-serif;max-width:none;flex-shrink:0}
+.diagram-node{cursor:pointer;outline:none}
+.diagram-node rect{fill:var(--white);stroke:var(--line);stroke-width:1.5;transition:stroke .15s}
+.diagram-node.input rect,.diagram-node.output rect{fill:var(--mint);stroke:var(--green)}
+.diagram-node.loss rect{fill:#fff1d5;stroke:#b58b38}
+.diagram-node-title{fill:var(--ink);font-size:13px;font-weight:600;pointer-events:none}
+.diagram-node-hint{fill:var(--muted);font-size:10px;pointer-events:none}
+.diagram-node:hover rect,.diagram-node:focus-visible rect,.diagram-node.selected rect{stroke:var(--green);stroke-width:3}
+.diagram-node:focus-visible rect{stroke-dasharray:5 3}
+.diagram-edge path{fill:none;stroke:var(--green);stroke-width:1.7}
+.diagram-edge text{fill:var(--green);font-size:9px;font-weight:600;paint-order:stroke;stroke:var(--paper);stroke-width:4;stroke-linejoin:round}
+.diagram-edge.kind-skip path{stroke:#9b72cf;stroke-dasharray:5 4}
+.diagram-edge.kind-context path{stroke:#4686ad;stroke-dasharray:3 3}
+.diagram-edge.kind-training path{stroke:#b58b38;stroke-dasharray:2 4}
+.diagram-arrow.kind-flow{fill:var(--green)}.diagram-arrow.kind-skip{fill:#9b72cf}.diagram-arrow.kind-context{fill:#4686ad}.diagram-arrow.kind-training{fill:#b58b38}
+.diagram-repeat rect{fill:none;stroke:var(--line);stroke-dasharray:5 4;stroke-width:1.5}
+.diagram-repeat text{fill:var(--muted);font:9px Consolas,monospace;letter-spacing:.3px}
+.diagram-detail{border:1px solid var(--line);border-left:3px solid var(--green);padding:18px;margin:16px 0;border-radius:7px;background:var(--paper);min-height:150px}
+.diagram-detail h4{font-size:16px;margin:8px 0}
+.diagram-detail p{font-size:13px;line-height:1.8;margin-bottom:10px}
+.diagram-detail small{font:11px Consolas,monospace;color:var(--muted)}
+.diagram-legend{display:flex;gap:10px 16px;flex-wrap:wrap;margin:12px 0;font-size:10px;color:var(--muted)}
+.diagram-legend span{display:flex;align-items:center;gap:6px}.diagram-legend i{width:23px;border-top:2px solid var(--green)}
+.diagram-legend .kind-skip{border-color:#9b72cf;border-top-style:dashed}.diagram-legend .kind-context{border-color:#4686ad;border-top-style:dashed}.diagram-legend .kind-training{border-color:#b58b38;border-top-style:dotted}
+.diagram-source{margin:16px 0;overflow-wrap:anywhere}
+.diagram-connections{margin:14px 0;font-size:12px;line-height:1.8;color:var(--muted)}
+.diagram-connections summary{cursor:pointer;color:var(--green)}
+.diagram-connections ul{padding-left:20px}.diagram-connections li{font-size:12px;overflow-wrap:anywhere}
+.diagram-model-label,.diagram-filters label{display:block;font-size:12px;color:var(--muted)}
+.diagram-model-label select,.diagram-filters select{display:block;width:100%;min-width:0;max-width:100%;margin:8px 0 18px;background:var(--white);color:var(--ink);border:1px solid var(--line);padding:12px;border-radius:7px;font-size:12px}
+.diagram-filters{display:grid;grid-template-columns:1fr 2fr;gap:18px}
+.diagram-catalog-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:20px;align-items:start}
+.diagram-catalog-main{min-width:0}
+.diagram-catalog-nav{max-height:740px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--white)}
+.diagram-catalog-nav a{display:block;padding:14px;font-size:12px;line-height:1.6;text-decoration:none;border-bottom:1px solid var(--line);color:var(--ink)}
+.diagram-catalog-nav small{display:block;color:var(--muted);font:9px Consolas,monospace;margin-bottom:4px}
+.diagram-catalog-nav a.active{border-left:3px solid var(--green);background:var(--paper)}
+:root[data-theme^="neon"] .diagram-node.input rect,:root[data-theme^="neon"] .diagram-node.output rect{fill:var(--accent-wash);stroke:var(--accent-border)}
+:root[data-theme^="neon"] .diagram-node.loss rect{fill:var(--warning-bg);stroke:var(--amber)}
+:root[data-theme^="neon"] .diagram-node:hover rect,:root[data-theme^="neon"] .diagram-node.selected rect,:root[data-theme^="neon"] .diagram-node:focus-visible rect{stroke:var(--accent)}
+:root[data-theme^="neon"] .diagram-edge.kind-context path{stroke:var(--accent-two)}
+:root[data-theme^="neon"] .diagram-arrow.kind-context{fill:var(--accent-two)}
+@media(max-width:1100px){.diagram-catalog-layout{grid-template-columns:1fr}.diagram-catalog-nav{display:none}}
+@media(max-width:740px){.diagram-filters{grid-template-columns:1fr;gap:0}.diagram-viewport{max-height:530px}.diagram-detail{padding:14px}.diagram-instruction span{display:block}.architecture-schemes .section-head{align-items:flex-start}}
+@media print{.diagram-viewport{max-height:none;overflow:visible}.diagram-catalog-nav,.diagram-filters,.diagram-instruction{display:none}.model-diagram{max-width:100%;height:auto}.diagram-catalog-layout{display:block}}
 .math-notes{min-width:0;margin:30px 0;padding-top:4px;border-top:1px solid var(--line)}
 .math-notes .katex-display{max-width:100%;overflow-x:auto;overflow-y:hidden;padding:12px 4px;margin:20px 0}
 .math-notes .katex-display>.katex{white-space:nowrap}
@@ -31,3 +84,6 @@
 .math-review .math-notes{border-top:0;margin-top:15px}
 @media(max-width:740px){.code-toolbar{align-items:flex-start;flex-direction:column}.code-example pre{padding:12px}.math-review{padding:12px}.math-notes .katex{font-size:1em}}
 @media(max-width:740px){.architecture-section .section-head{align-items:flex-start;flex-direction:column;gap:8px}}
+
+.diagram-viewport.expanded{max-height:none}
+.diagram-controls{margin:12px 0}
