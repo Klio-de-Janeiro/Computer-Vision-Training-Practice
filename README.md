@@ -36,6 +36,8 @@ python -X utf8 serve.py
 | Всего | **65** | **457** |
 
 - Определение, механизм, формула там, где нужна, простой пример и типичная ошибка в каждом конспекте.
+- Во всех 65 темах — раздел «Математика и вывод»: LaTeX, обозначения, условия применимости и пояснения. Для 93 численных задач добавлено отдельное решение формулой.
+- Во всех темах — короткий пример Python: функции OpenCV/NumPy, классы PyTorch, loss, masks, rotary embeddings, pooling и matching. Код сопровождается размерами входов, ссылкой на лекцию и указанием того, какие части полной модели опущены. Кнопка копирования переносит обычный текст Python.
 - 279 вопросов на рассуждение, 93 расчётных, 48 с одним вариантом, 28 с несколькими, 9 коротких определений.
 - После ответа — эталон, пример и ссылка на точные ячейки ноутбука. Варианты ответов перемешиваются.
 - Для рассуждений — критерии и самостоятельная оценка «пока не знаю / частично / смог объяснить». Приложение не использует языковую модель и не выдаёт проверку по ключевым словам за понимание смысла.
@@ -66,6 +68,10 @@ python -X utf8 serve.py
 
 Это 340 новых задач в дополнение к исходному банку. В Swin несколько задач посвящены пути обмена через shifted windows, циклическому сдвигу, маскам границ и padding, relative position bias, иерархии, patch merging и числу attention-пар. Остальные банки также сочетают определения, объяснения, сравнения, поиск ошибок и расчёты. Расчётные задачи задают все необходимые размеры и допущения; их числа не следует считать конфигурациями конкретных checkpoint.
 
+Математика доступна в конспектах и в раскрывающемся блоке после ответа. Например, attention разобран через дисперсию скалярного произведения и размерности; RoPE — через произведение матриц вращения; Swin — через число окон и пар; SigLIP — через signed logistic loss и его нормировку; DETR — через инъективное назначение. Оценка ранга logits отдельно отличена от ранга softmax на конкретном контрпримере.
+
+KaTeX, код и пояснения отображаются локально. Примеры — самостоятельно составленные учебные схемы по темам лекций, а не полные реализации pretrained архитектур. Они не исполняются в браузере и не требуют установки Python для чтения практикума. Для запуска скопированного кода нужны указанные в нём библиотеки; примеры M-RoPE и NMS явно принимают функцию из соседней темы.
+
 ## Публичный репозиторий и личные материалы
 
 Публичная версия запускается сразу: в ней есть интерфейс, конспекты и банк вопросов. Полные тексты ноутбуков, домашние решения, изображения курса и личный прогресс в репозиторий не включаются. Файл `dist/sources.js` содержит только названия, номера уроков и сведения для ссылок на источники.
@@ -93,6 +99,7 @@ python -X utf8 tools/build_sources.py --course "ПУТЬ_К_ПАПКЕ_КУРС�
 - [Swin Transformer](https://arxiv.org/abs/2103.14030), [CoCa](https://arxiv.org/abs/2205.01917), [SigLIP 2 / NaFlex](https://arxiv.org/abs/2502.14786).
 - [SSD](https://arxiv.org/abs/1512.02325), [CenterNet: Objects as Points](https://arxiv.org/abs/1904.07850), [DETR](https://arxiv.org/abs/2005.12872).
 - [PyTorch: attention masks](https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention.html), [BCEWithLogitsLoss](https://docs.pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html), [OpenCV: filter2D](https://docs.opencv.org/4.x/d4/d86/group__imgproc__filter.html).
+- [PyTorch: MultiheadAttention и соглашения масок](https://docs.pytorch.org/docs/2.14/generated/torch.nn.MultiheadAttention.html), [cross_entropy и ignore_index](https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.cross_entropy.html), [binary_cross_entropy_with_logits](https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.binary_cross_entropy_with_logits.html).
 
 ## Данные и автономность
 
@@ -102,7 +109,7 @@ python -X utf8 tools/build_sources.py --course "ПУТЬ_К_ПАПКЕ_КУРС�
 
 ## Обновление и проверка
 
-Редактируемый банк: `tools/content.py` и `tools/transformer_bank.py`. Сборка статических данных:
+Редактируемый банк: `tools/content.py`, `tools/transformer_bank.py`, `tools/math_notes.py`. Сборка статических данных:
 
 ```powershell
 python -X utf8 tools/build_sources.py
@@ -111,6 +118,7 @@ python -X utf8 tools/check_content.py
 python -X utf8 tools/check_transformer_numbers.py
 node --check dist/app.js
 node --check dist/core.js
+node tools/qa_math.cjs --formulas-only
 ```
 
 Без аргументов `build_sources.py` ищет курс в соседней структуре `CV_MIPT/cv_course_at_mipt`. Для другого расположения используйте `--course`. Скрипт читает ноутбуки и копирует только материал для локального просмотра, не запуская код.
@@ -128,8 +136,13 @@ node --check dist/themes.js
 ```powershell
 node tools/qa.cjs <путь-к-пакету-playwright> <путь-к-chromium>
 node tools/qa_transformers.cjs <путь-к-пакету-playwright> <путь-к-chromium>
+node tools/qa_math.cjs <путь-к-пакету-playwright> <путь-к-chromium>
 ```
 
 Проверяются все конспекты, все ноутбуки, 5 форматов ответа, сохранение сессии, итоговый разбор, экспорт/импорт и мобильная навигация. Тест запускает отдельный временный браузерный контекст и не меняет ваш учебный прогресс. Снимки интерфейса сохраняются в `qa`.
 
 `qa_transformers.cjs` поднимает временный HTTP-сервер только на loopback и проверяет все 11 банков, полные наборы вопросов, переходы фильтров, развёрнутые ответы, сохранение прогресса и оба неоновых оформления на компьютере и телефоне. Сервер закрывается после теста. `check_transformer_numbers.py` независимо пересчитывает все 73 новых численных ответа.
+
+`qa_math.cjs` проверяет KaTeX всех формул, все 65 тем на компьютере и телефоне, три оформления, копирование кода (в тестовый буфер), раскрытие математики после ответа и поиск по новым примерам. `check_content.py` проверяет синтаксис всех 65 Python-примеров без их запуска. Для проверки исполнения на синтетических данных можно запустить `python tools/check_math_examples.py` в среде с `torch`, `numpy`, `scipy` и `opencv-python-headless`: тест не скачивает модели и изображения.
+
+GitHub Actions выполняет этот тест в отдельном Linux job с CPU PyTorch 2.14.1, NumPy 2.5.4, SciPy 1.18.1 и OpenCV 5.0.0.93. Зависимости проверки не включаются в офлайн-приложение.

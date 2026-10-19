@@ -2,6 +2,7 @@
 import json
 import runpy
 import argparse
+import ast
 from collections import Counter
 from pathlib import Path
 
@@ -16,7 +17,8 @@ assert len({t['id'] for t in topics})==len(topics)
 assert len({q['id'] for q in questions})==len(questions)
 ids={t['id'] for t in topics}
 notebooks={}
-for item in [*topics,*questions]:
+implementations=[{'id':'code-'+t['id'],'source':t['implementation']['source']} for t in topics]
+for item in [*topics,*questions,*implementations]:
     source=item['source']; path=course/source['path']
     if not course.is_dir():
         assert source['cells'] and all(isinstance(n,int) and n>=1 for n in source['cells'])
@@ -38,10 +40,16 @@ for q in questions:
         assert len(q['correct'])==1 if q['type']=='single' else 1<len(q['correct'])<len(q['options'])
     if q['type']=='short': assert q['aliases']
     if q['type']=='number': assert q['tolerance']>=0
+    if q['type']=='number': assert q['calculation'].strip()
     if q['type']=='open': assert len(q['rubric'])>=3
 for n in range(1,6):
     assert sum(q['lesson']==n for q in questions)>=20
 print('Content checks passed:',len(topics),'topics,',len(questions),'questions')
+for t in topics:
+    assert t['mathNotes'].strip() and '$$' in t['mathNotes'], t['id']
+    assert t['implementation']['note'].strip(),t['id']
+    ast.parse(t['implementation']['code'],filename=t['id']+'.py')
+print('Mathematical notes and Python syntax checked:',len(topics),'examples; worked LaTeX:',sum(q['type']=='number' for q in questions))
 print('By lesson:',dict(Counter(q['lesson'] for q in questions)))
 print('By format:',dict(Counter(q['type'] for q in questions)))
 architectures=data.get('ARCHITECTURES',[])

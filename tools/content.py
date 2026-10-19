@@ -634,6 +634,7 @@ CORRECTIONS = [
 ]
 
 ARCHITECTURES=runpy.run_path(str(Path(__file__).with_name('transformer_bank.py')))['extend'](TOPICS,QUESTIONS)
+runpy.run_path(str(Path(__file__).with_name('math_notes.py')))['extend'](TOPICS,QUESTIONS)
 
 if __name__ == '__main__':
     app=Path(__file__).resolve().parents[1]

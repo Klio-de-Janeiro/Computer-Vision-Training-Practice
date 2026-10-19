@@ -17,4 +17,17 @@
 .architecture-card .actions{margin-top:auto;padding-top:8px}
 .architecture-card p{font-size:13px}
 .architecture-theory{margin:28px 0}
+.math-notes{min-width:0;margin:30px 0;padding-top:4px;border-top:1px solid var(--line)}
+.math-notes .katex-display{max-width:100%;overflow-x:auto;overflow-y:hidden;padding:12px 4px;margin:20px 0}
+.math-notes .katex-display>.katex{white-space:nowrap}
+.implementation{min-width:0;margin:30px 0}
+.code-example{min-width:0;max-width:100%;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--paper);margin:16px 0}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--white)}
+.code-toolbar>span{font:10px Consolas,monospace;color:var(--green);letter-spacing:.5px}
+.code-example pre{margin:0;padding:18px;max-width:100%;overflow:auto;tab-size:4}
+.article .code-example code,.feedback .code-example code{background:transparent;color:var(--ink);font:12px/1.75 Consolas,"Courier New",monospace;white-space:pre}
+.math-review{margin:24px 0;padding:16px;border:1px solid var(--line);border-radius:8px;background:var(--white)}
+.math-review>summary{cursor:pointer;color:var(--green);font-size:13px;line-height:1.7}
+.math-review .math-notes{border-top:0;margin-top:15px}
+@media(max-width:740px){.code-toolbar{align-items:flex-start;flex-direction:column}.code-example pre{padding:12px}.math-review{padding:12px}.math-notes .katex{font-size:1em}}
 @media(max-width:740px){.architecture-section .section-head{align-items:flex-start;flex-direction:column;gap:8px}}
