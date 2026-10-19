@@ -935,7 +935,7 @@ def add_classical_notes(N):
         hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
         boxes, scores = hog.detectMultiScale(image_bgr, winStride=(8, 8), scale=1.05)
         return boxes, scores  # boxes: x,y,w,h
-    ''','Готовый HOG+SVM detector из лекции. Это конкретный detector людей; установка классификатора является частью модели, а не обучением по текущей картинке.')
+    ''','Вызовы HOG+SVM из лекции для OpenCV 4.x (проверка использует 4.11). В OpenCV 5 этот legacy API отсутствует. Это готовый detector людей, не обучение по текущей картинке.')
     N('camera',r'''
     Для pinhole-камеры без distortion:
     $$s\begin{pmatrix}u\\v\\1\end{pmatrix}

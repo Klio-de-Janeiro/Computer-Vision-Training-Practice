@@ -60,6 +60,7 @@ const server=http.createServer((req,res)=>{
     fs.mkdirSync(out,{recursive:true});
     for(const theme of ['neon-dark','neon-light','classic']){
       await page.locator('#theme-select').selectOption(theme);
+      assert.equal(await page.locator('.code-example code').evaluate(e=>getComputedStyle(e).backgroundColor),'rgba(0, 0, 0, 0)');
       await page.locator('.math-notes').screenshot({path:path.join(out,'math-'+theme+'.png')});
       await page.locator('.code-example').screenshot({path:path.join(out,'code-'+theme+'.png')});
     }
