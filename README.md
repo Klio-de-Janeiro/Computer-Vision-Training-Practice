@@ -2,6 +2,25 @@
 
 Локальное приложение для подготовки к экзамену по пяти урокам компьютерного зрения МФТИ. 65 конспектов, 457 вопросов и три цветовые темы.
 
+Онлайн-версия: **[cv-training.web.app](https://cv-training.web.app)**.
+
+## Firebase и GitHub
+
+Сайт опубликован на Firebase Hosting. Push в `main` автоматически обновляет его после успешных jobs `check` и `examples` в GitHub Actions. Для pull request выполняются проверки. Настройки: `firebase.json`, `.firebaserc` и `.github/workflows/check.yml`.
+
+GitHub получает временные права через Google Workload Identity Federation: отдельный аккаунт `github-hosting` имеет роли Firebase Hosting Admin и Service Usage Consumer. Вход ограничен числовыми ID этого репозитория и владельца, веткой `main` и событием `push`. Постоянные ключи сервисного аккаунта и Firebase-токены не используются. Проект — `cv-training-practice-mipt`, Hosting target — `practice`, сайт — `cv-training`.
+
+Перед публикацией `python tools/package_hosting.py` собирает `.publish/site` только из разрешённых файлов `dist`, отслеживаемых Git. Локальные ноутбуки и изображения исключены из сборки; неожиданные или устаревшие файлы останавливают публикацию. Все маршруты используют `#`, поэтому отсутствующие файлы возвращают 404 без подмены главной страницей.
+
+Для ручного обновления нужны Python, Git, Node.js 22+ и Firebase CLI 15.26.0:
+
+```powershell
+firebase login
+firebase deploy --only hosting:practice --project cv-training-practice-mipt
+```
+
+**Перенос прогресса:** на прежнем локальном сайте откройте «Мой прогресс» → «Экспорт», затем импортируйте JSON в онлайн-версии. Браузер хранит данные отдельно для каждого адреса. На Firebase прогресс также остаётся в вашем браузере; синхронизации между устройствами нет.
+
 ## Темы оформления
 
 Переключатель **«Цветовая тема»** находится в верхней панели:

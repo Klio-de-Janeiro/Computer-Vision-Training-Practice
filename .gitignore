@@ -21,3 +21,6 @@ node_modules/
 .env
 .env.*
 .publish/
+.firebase/
+firebase-debug.log*
+gha-creds-*.json

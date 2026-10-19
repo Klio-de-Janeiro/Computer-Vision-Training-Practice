@@ -1,0 +1,8 @@
+{
+  "projects": { "default": "cv-training-practice-mipt" },
+  "targets": {
+    "cv-training-practice-mipt": {
+      "hosting": { "practice": ["cv-training"] }
+    }
+  }
+}
