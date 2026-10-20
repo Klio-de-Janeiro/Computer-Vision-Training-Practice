@@ -21,6 +21,8 @@ jobs:
       - run: node --check dist/diagrams.js
       - run: node --check dist/app.js
       - run: node --check dist/themes.js
+      - run: node --check dist/study.js
+      - run: node tools/qa_study.cjs --core-only
       - run: python tools/package_hosting.py
   examples:
     runs-on: ubuntu-latest

@@ -46,7 +46,7 @@ const server=http.createServer((req,res)=>{
     const node=page.locator('[data-node="'+chosen.id+'"]');
     await node.scrollIntoViewIfNeeded();await node.click();
     assert.equal(await node.getAttribute('aria-pressed'),'true');
-    assert.equal(await page.locator('.diagram-detail p').textContent(),chosen.detail);
+    assert.equal(await page.locator('.diagram-detail > p').textContent(),chosen.detail);
    }
   }
   await go('#theory?lesson=3&topic=resnet');

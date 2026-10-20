@@ -85,5 +85,49 @@
 @media(max-width:740px){.code-toolbar{align-items:flex-start;flex-direction:column}.code-example pre{padding:12px}.math-review{padding:12px}.math-notes .katex{font-size:1em}}
 @media(max-width:740px){.architecture-section .section-head{align-items:flex-start;flex-direction:column;gap:8px}}
 
+/* Worked examples, interactive token grids and a reversible wide reading view. */
+.reading-toolbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 0 16px;background:var(--paper);border-bottom:1px solid var(--line);margin-bottom:20px}
+.reading-toolbar>span{font-size:11px;color:var(--muted)}
+.reading-toolbar .actions{gap:8px}
+body.reading-page.reading-left-hidden .sidebar{transform:translateX(-100%);visibility:hidden;pointer-events:none}
+body.reading-page.reading-left-hidden .workspace{margin-left:0}
+body.reading-page.reading-left-hidden main{max-width:none}
+body.reading-page.reading-right-hidden .reading-layout{grid-template-columns:minmax(0,1fr)}
+body.reading-page.reading-right-hidden #theory-side{display:none}
+.worked-walkthrough{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 0 24px;margin:26px 0}
+.walkthrough-given,.diagram-scenario{background:var(--surface-soft,var(--paper));padding:16px;border:1px solid var(--line);border-radius:8px;margin:18px 0;color:var(--ink)}
+.walkthrough-given>strong,.diagram-scenario>strong{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--green)}
+.walkthrough-given p:last-child,.diagram-scenario p:last-child{margin-bottom:0}
+.walkthrough-steps{padding-left:26px;margin:22px 0}
+.walkthrough-steps>li{padding:0 0 13px 10px;line-height:1.8}
+.walkthrough-steps>li::marker{color:var(--green);font-weight:700}
+.walkthrough-steps h4{margin:0 0 8px;font-size:15px;line-height:1.6}
+.walkthrough-steps p{margin-top:0}
+.study-demo{padding:22px;border:1px solid var(--line);border-radius:10px;background:var(--surface,var(--white));margin:24px 0}
+.study-demo h3{margin-top:0}.study-demo h4{font-size:12px;line-height:1.7;margin:12px 0}
+.study-demo-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.pixel-grid{display:grid;grid-template-columns:repeat(8,1fr);max-width:280px;border:1px solid var(--line);padding:3px;background:var(--paper)}
+.pixel-grid span{aspect-ratio:1}.pixel-grid .pixel-selected{box-shadow:inset 0 0 0 2px white,inset 0 0 0 3px #192139}
+.token-grid,.window-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;max-width:340px}
+.token-grid button,.window-grid button{min-height:42px;min-width:0;border:1px solid var(--line);border-radius:5px;background:var(--paper);color:var(--ink);font:12px Consolas,monospace;cursor:pointer}
+.token-grid [aria-pressed=true],.window-grid .allowed-key{background:var(--accent-wash,var(--mint));border:2px solid var(--green);color:var(--ink)}
+.token-grid button:focus-visible,.window-grid button:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+.demo-result{margin-top:18px;padding-top:8px;border-top:1px solid var(--line)}
+.demo-vector{font:12px/1.9 Consolas,monospace;padding:12px;background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow-wrap:anywhere}
+.demo-switch{display:flex;align-items:center;gap:9px;font-size:13px;margin:18px 0;cursor:pointer}
+.window-grid{max-width:440px}.window-grid button{min-height:64px;border-left-width:5px}
+.window-grid button span,.window-grid button small{display:block}.window-grid button small{font-size:9px;letter-spacing:.4px;margin-top:5px}
+.window-grid .region-0{border-left-color:#41a9b5}.window-grid .region-1{border-left-color:#9672d1}.window-grid .region-2{border-left-color:#bc883a}.window-grid .region-3{border-left-color:#55975f}
+.window-grid .query-token{outline:2px dashed var(--ink);outline-offset:2px}
+.diagram-scenario p,.diagram-block-list p{font-size:13px;line-height:1.85}
+.diagram-worked{border-top:1px solid var(--line);margin-top:14px;padding-top:4px}
+.diagram-worked h5{color:var(--green);font-size:11px;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 10px}
+.diagram-operations{padding-left:20px}.diagram-operations>li{padding:8px 0}.diagram-operations strong{font-size:12px}
+.diagram-block-list{border:1px solid var(--line);border-radius:7px;margin:16px 0;padding:14px}
+.diagram-block-list>summary{cursor:pointer;font-size:12px;color:var(--green);line-height:1.7}
+.diagram-block-list>section{padding:18px 0;border-top:1px solid var(--line);margin-top:16px}.diagram-block-list small{color:var(--muted)}
+@media(max-width:740px){.reading-left-control{display:none}.reading-toolbar{gap:9px;padding-top:10px}.reading-toolbar .btn{font-size:11px;padding:9px 10px}.study-demo{padding:15px}.study-demo-columns{grid-template-columns:1fr}.pixel-grid,.token-grid{max-width:100%}.walkthrough-steps{padding-left:20px}.walkthrough-steps>li{padding-left:3px}}
+@media print{.reading-toolbar,.study-demo{display:none}.diagram-block-list{display:block}}
+
 .diagram-viewport.expanded{max-height:none}
 .diagram-controls{margin:12px 0}

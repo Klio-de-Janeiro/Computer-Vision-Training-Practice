@@ -19,7 +19,8 @@ ids={t['id'] for t in topics}
 notebooks={}
 implementations=[{'id':'code-'+t['id'],'source':t['implementation']['source']} for t in topics]
 diagrams=data['DIAGRAMS']
-for item in [*topics,*questions,*implementations,*diagrams]:
+walkthroughs=[{'id':'walkthrough-'+t['id'],'source':t['walkthrough']['source']} for t in topics]
+for item in [*topics,*questions,*implementations,*diagrams,*walkthroughs]:
     source=item['source']; path=course/source['path']
     if not course.is_dir():
         assert source['cells'] and all(isinstance(n,int) and n>=1 for n in source['cells'])
@@ -47,6 +48,12 @@ for n in range(1,6):
     assert sum(q['lesson']==n for q in questions)>=20
 print('Content checks passed:',len(topics),'topics,',len(questions),'questions')
 for t in topics:
+    w=t['walkthrough']
+    assert w['given'] and w['title'] and w['conclusion'] and len(w['steps'])>=3,t['id']
+    assert w['source']['path']==t['source']['path'] and set(t['source']['cells']).issubset(w['source']['cells']),t['id']
+    assert all(s['title'] and s['text'].strip() for s in w['steps']),t['id']
+    prose=[w['given'],w['conclusion'],*[s['text'] for s in w['steps']]]
+    assert not any(ord(c)<32 and c not in '\n\r\t' for text in prose for c in text),t['id']
     assert t['mathNotes'].strip() and '$$' in t['mathNotes'], t['id']
     assert t['implementation']['note'].strip(),t['id']
     ast.parse(t['implementation']['code'],filename=t['id']+'.py')
@@ -58,6 +65,7 @@ for d in diagrams:
     assert len(nodes)==len(d['nodes'])
     assert len({(n['col'],n['row']) for n in d['nodes']})==len(nodes)
     assert all(n['title'] and n['hint'] and n['detail'] for n in nodes.values())
+    assert d['scenario'] and all(len(n['workedExample'])>=60 for n in nodes.values()),d['id']
     assert all(n['kind'] in ['block','input','output','loss'] for n in nodes.values())
     assert all(isinstance(n['col'],int) and isinstance(n['row'],int) and n['col']>=0 and n['row']>=0 for n in nodes.values())
     assert all(e['from'] in nodes and e['to'] in nodes and e['from']!=e['to'] for e in d['edges'])
@@ -73,6 +81,7 @@ for d in diagrams:
     assert len(visited)==len(nodes),d['id']
 for t in topics:assert t['diagrams']==[d['id'] for d in diagrams if d['topic']==t['id']]
 print('Architecture diagrams checked:',len(diagrams),'graphs;',sum(len(d['nodes']) for d in diagrams),'blocks')
+print('Worked examples:',len(topics),'topics;',sum(len(t['walkthrough']['steps']) for t in topics),'steps; concrete traces for every diagram node')
 print('By lesson:',dict(Counter(q['lesson'] for q in questions)))
 print('By format:',dict(Counter(q['type'] for q in questions)))
 architectures=data.get('ARCHITECTURES',[])

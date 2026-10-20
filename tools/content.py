@@ -636,6 +636,8 @@ CORRECTIONS = [
 ARCHITECTURES=runpy.run_path(str(Path(__file__).with_name('transformer_bank.py')))['extend'](TOPICS,QUESTIONS)
 runpy.run_path(str(Path(__file__).with_name('math_notes.py')))['extend'](TOPICS,QUESTIONS)
 DIAGRAMS=runpy.run_path(str(Path(__file__).with_name('model_diagrams.py')))['build'](TOPICS)
+runpy.run_path(str(Path(__file__).with_name('walkthroughs.py')))['extend'](TOPICS)
+runpy.run_path(str(Path(__file__).with_name('diagram_walkthroughs.py')))['extend'](DIAGRAMS,TOPICS)
 
 if __name__ == '__main__':
     app=Path(__file__).resolve().parents[1]
