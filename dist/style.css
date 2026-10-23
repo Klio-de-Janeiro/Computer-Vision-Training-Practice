@@ -132,6 +132,7 @@ body.reading-page.reading-right-hidden #theory-side{display:none}
 .code-filter input,.code-filter select,.code-picker select{width:100%;min-width:0;padding:12px;border:1px solid var(--line);border-radius:6px;background:var(--white);color:var(--ink)}
 .code-picker{margin:20px 0}.code-task{min-width:0}.code-task pre,.code-answer pre{background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:16px;overflow:auto;font:12px/1.8 Consolas,monospace;max-width:100%}
 .code-task h2,.code-toolbar strong{overflow-wrap:anywhere}.code-filter label,.code-picker{min-width:0}
+.material-card h2{overflow-wrap:anywhere}.material-card .actions>a{max-width:100%;overflow-wrap:anywhere}
 .code-solution,.code-cell{border:1px solid var(--line);border-radius:7px;padding:16px;margin:16px 0;min-width:0}.code-solution>summary,.code-cell>summary{cursor:pointer;color:var(--green);font-size:13px;overflow-wrap:anywhere;line-height:1.8}
 .code-answer h4{margin:22px 0 8px}.code-answer p{line-height:1.9}.code-answer .code-toolbar{margin-top:18px;gap:12px}.code-extras{border-top:1px solid var(--line);margin-top:24px;padding-top:10px}.code-pagination{display:flex;justify-content:space-between;margin-top:26px;gap:16px;font-size:13px}
 @media(max-width:980px){.code-filter{grid-template-columns:1fr 1fr}.code-filter label:last-of-type{grid-column:1/-1}}

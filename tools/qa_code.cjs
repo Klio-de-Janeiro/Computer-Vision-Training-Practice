@@ -48,7 +48,7 @@ const server=http.createServer((req,res)=>{
   await page.locator('#answer-text').fill('torch.tril(torch.ones(T,T,dtype=torch.bool))');await page.locator('#answer-form button[type=submit]').click();await page.locator('.feedback').waitFor();
   assert.ok(await page.locator('.feedback pre code').count()>0);await page.locator('[data-rate="1"]').click();
   const saved=await page.evaluate(()=>JSON.parse(JSON.stringify(state.records)));await page.reload();await page.locator('.feedback').waitFor();assert.deepEqual(await page.evaluate(()=>JSON.parse(JSON.stringify(state.records))),saved);
-  await go('#materials');assert.equal(await page.locator('.panel h2').count(),11);
+  await go('#materials');assert.equal(await page.locator('.panel h2').count(),11);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'Materials mobile overflow');
   await go('#theory?lesson=6&topic=sam-prompts');assert.ok(await page.locator('.code-cell').count()>0);assert.equal(await page.locator('.katex-error').count(),0);
   await page.locator('.code-cell>summary').first().click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   await go('#practice?lesson=6&collection=materials&count=all');assert.ok(await page.locator('#pool-size').textContent());
