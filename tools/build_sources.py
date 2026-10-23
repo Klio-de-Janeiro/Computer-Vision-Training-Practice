@@ -23,8 +23,12 @@ def main():
     private = DIST / 'local'
     private.mkdir(parents=True, exist_ok=True)
     notebooks = []
-    for path in sorted(course.glob('lesson_*/**/*.ipynb')):
-        nb = json.loads(path.read_text(encoding='utf-8'))
+    paths=list(course.glob('lesson_*/**/*.ipynb'))
+    paths += [course/p for p in ['lesson_2/hw/mean-shift.md','lesson_2/hw/seam-carving.md','lesson_5/hw/hw-assignment.md']]
+    for path in sorted(paths):
+        if int(path.relative_to(course).parts[0].split('_')[1])>6:continue
+        document=path.suffix!='.ipynb'
+        nb = ({'cells':[{'cell_type':'markdown','source':[path.read_text(encoding='utf-8')]}]} if document else json.loads(path.read_text(encoding='utf-8')))
         rel = path.relative_to(course).as_posix()
         ident = hashlib.sha256(rel.encode()).hexdigest()[:12]
         cells = []
@@ -60,16 +64,16 @@ def main():
             if source.strip():
                 cells.append({'number': index, 'type': cell['cell_type'], 'text': source, 'images': images})
         notebooks.append({'id': ident, 'lesson': int(path.parts[len(course.parts)].split('_')[1]),
-                          'path': rel, 'title': path.stem, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'cells': cells})
+                          'path': rel, 'title': path.stem, 'document':document, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'cells': cells})
     manifest = []
     for notebook in notebooks:
         ident = notebook['id']
         payload = 'window.CV_NOTEBOOKS = window.CV_NOTEBOOKS || {};\nwindow.CV_NOTEBOOKS[' + json.dumps(ident) + '] = ' + json.dumps(notebook, ensure_ascii=False) + ';\n'
-        (private / f'{ident}.js').write_text(payload, encoding='utf-8')
+        (private / f'{ident}.js').write_text(payload, encoding='utf-8', newline='\n')
         manifest.append({k:v for k,v in notebook.items() if k!='cells'} | {
             'cellCount':len(notebook['cells']), 'imageCount':sum(len(c['images']) for c in notebook['cells'])})
     # Public metadata is safe to track; notebook bodies and images stay ignored locally.
-    (DIST / 'sources.js').write_text('window.CV_SOURCES = ' + json.dumps(manifest, ensure_ascii=False) + ';\n', encoding='utf-8')
+    (DIST / 'sources.js').write_text('window.CV_SOURCES = ' + json.dumps(manifest, ensure_ascii=False) + ';\n', encoding='utf-8', newline='\n')
     print(f'{len(notebooks)} notebooks, {sum(len(n["cells"]) for n in notebooks)} cells, {len(list(assets.iterdir()))} local images')
 
 if __name__ == '__main__':

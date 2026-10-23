@@ -17,7 +17,8 @@ assert.equal(C.grade({type:'multi',correct:[0,1]},{selected:[1,0]}).correct,true
 assert.equal(C.grade({type:'multi',correct:[0,1]},{selected:[0]}).correct,false);
 assert.equal(C.grade(q('rope'),{text:'любые слова'}).auto,false);
 const mixed=C.select(data.questions,{count:15},{},[]);
-assert.deepEqual([1,2,3,4,5].map(i=>mixed.filter(q=>q.lesson===i).length),[3,3,3,3,3]);
+const counts=data.lessons.map(l=>mixed.filter(q=>q.lesson===l.id).length);
+assert.equal(counts.reduce((a,b)=>a+b,0),15);assert.ok(Math.max(...counts)-Math.min(...counts)<=1);
 assert.equal(C.select(data.questions,{mode:'errors',count:'all'},{[data.questions[0].id]:{score:0}},[]).length,1);
 assert.throws(()=>C.validImport({version:1,records:{bad:{score:3}}},new Set(['bad']),new Set()));
 console.log('Core checks passed');
@@ -45,7 +46,7 @@ async function browserQA(){
   });
   await page.goto(base);
   await page.locator('.lesson-card').first().waitFor();
-  assert.equal(await page.locator('.lesson-card').count(),5);
+  assert.equal(await page.locator('.lesson-card').count(),data.lessons.length);
   await fs.promises.mkdir(path.join(__dirname,'../qa'),{recursive:true});
   await page.screenshot({path:path.join(__dirname,'../qa/desktop.png'),fullPage:true});
   async function go(hash){await page.evaluate(h=>{location.hash=h;},hash);await page.waitForTimeout(50);}

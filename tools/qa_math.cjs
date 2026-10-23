@@ -15,7 +15,7 @@ for(const q of data.questions)if(q.calculation){katex.renderToString(q.calculati
 function checkProse(text){for(const m of text.matchAll(/\$\$([\s\S]*?)\$\$|\$([^$\n]+?)\$/g)){katex.renderToString(m[1]||m[2],{throwOnError:true,strict:false});formulaCount++;}}
 for(const t of data.topics){checkProse(t.walkthrough.given);for(const s of t.walkthrough.steps)checkProse(s.text);}
 for(const d of data.diagrams)for(const n of d.nodes)for(const s of n.operations||[])checkProse(s.text);
-console.log('KaTeX syntax passed:',formulaCount,'formulas across 65 topics and 93 worked answers');
+console.log('KaTeX syntax passed:',formulaCount,'formulas across '+data.topics.length+' topics');
 if(process.argv.includes('--formulas-only'))process.exit(0);
 const {chromium}=require(process.argv[2]||'playwright');
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.woff2':'font/woff2','.woff':'font/woff','.png':'image/png'};

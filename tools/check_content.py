@@ -26,6 +26,9 @@ for item in [*topics,*questions,*implementations,*diagrams,*walkthroughs]:
         assert source['cells'] and all(isinstance(n,int) and n>=1 for n in source['cells'])
         continue
     assert path.is_file(), path
+    if source.get('document'):
+        assert source['cells']==[1] and path.read_text(encoding='utf-8').strip()
+        continue
     if path not in notebooks:
         notebooks[path]=json.loads(path.read_text(encoding='utf-8'))
     notebook=notebooks[path]
@@ -44,7 +47,7 @@ for q in questions:
     if q['type']=='number': assert q['tolerance']>=0
     if q['type']=='number': assert q['calculation'].strip()
     if q['type']=='open': assert len(q['rubric'])>=3
-for n in range(1,6):
+for n in range(1,len(data['LESSONS'])+1):
     assert sum(q['lesson']==n for q in questions)>=20
 print('Content checks passed:',len(topics),'topics,',len(questions),'questions')
 for t in topics:
@@ -82,6 +85,14 @@ for d in diagrams:
 for t in topics:assert t['diagrams']==[d['id'] for d in diagrams if d['topic']==t['id']]
 print('Architecture diagrams checked:',len(diagrams),'graphs;',sum(len(d['nodes']) for d in diagrams),'blocks')
 print('Worked examples:',len(topics),'topics;',sum(len(t['walkthrough']['steps']) for t in topics),'steps; concrete traces for every diagram node')
+cards=data['CODE_CARDS']
+assert len({c['id'] for c in cards})==len(cards) and len(cards)>=100
+for c in cards:
+    ast.parse(c['setup']+'\n'+c['code']+'\n'+c['test'],filename=c['id'])
+    assert all(k in ids for k in c['topics']) and c['result'] and c['explanation'] and c['trap']
+    assert c['runtime'] in ['cpu','external'] and (c['test'] or c['runtime']=='external')
+assert all(t['codeCards'] for t in topics)
+print('Additional API cells:',len(cards),'with theory links, explanations and practice questions')
 print('By lesson:',dict(Counter(q['lesson'] for q in questions)))
 print('By format:',dict(Counter(q['type'] for q in questions)))
 architectures=data.get('ARCHITECTURES',[])

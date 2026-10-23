@@ -638,9 +638,11 @@ runpy.run_path(str(Path(__file__).with_name('math_notes.py')))['extend'](TOPICS,
 DIAGRAMS=runpy.run_path(str(Path(__file__).with_name('model_diagrams.py')))['build'](TOPICS)
 runpy.run_path(str(Path(__file__).with_name('walkthroughs.py')))['extend'](TOPICS)
 runpy.run_path(str(Path(__file__).with_name('diagram_walkthroughs.py')))['extend'](DIAGRAMS,TOPICS)
+runpy.run_path(str(Path(__file__).with_name('practical_topics.py')))['extend'](LESSONS,TOPICS,QUESTIONS)
+CODE_CARDS=runpy.run_path(str(Path(__file__).with_name('code_bank.py')))['build'](TOPICS,QUESTIONS)
 
 if __name__ == '__main__':
     app=Path(__file__).resolve().parents[1]
-    payload={'version':1,'snapshotDate':'2026-10-18','lessons':LESSONS,'topics':TOPICS,'questions':QUESTIONS,'corrections':CORRECTIONS,'architectures':ARCHITECTURES,'diagrams':DIAGRAMS}
+    payload={'version':1,'snapshotDate':'2026-10-23','lessons':LESSONS,'topics':TOPICS,'questions':QUESTIONS,'corrections':CORRECTIONS,'architectures':ARCHITECTURES,'diagrams':DIAGRAMS,'codeCards':CODE_CARDS}
     (app/'dist'/'content.js').write_text('window.CV_CONTENT = '+json.dumps(payload,ensure_ascii=False)+';\n',encoding='utf-8',newline='\n')
     print(f'{len(TOPICS)} study topics, {len(QUESTIONS)} questions')

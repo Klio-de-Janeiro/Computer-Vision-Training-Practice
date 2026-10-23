@@ -14,6 +14,7 @@ torch.set_num_threads(2)
 data=runpy.run_path(str(Path(__file__).with_name('content.py')))
 namespaces={}
 for topic in data['TOPICS']:
+    if topic.get('supplemental'):continue  # supplementary API cells have their own executable checks
     ns={}
     exec(compile(topic['implementation']['code'],topic['id']+'.py','exec'),ns)
     namespaces[topic['id']]=ns

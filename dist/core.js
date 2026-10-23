@@ -19,14 +19,14 @@
     const a=[...items]; for (let i=a.length-1;i>0;i--) {const j=Math.floor(random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;
   }
   function select(questions, settings, records, bookmarks, random=Math.random) {
-    let pool=questions.filter(q=>(!settings.lesson || q.lesson===Number(settings.lesson)) && (!settings.topic || q.topic===settings.topic) && (!settings.type || q.type===settings.type) && (!settings.architecture || q.architecture===settings.architecture));
+    let pool=questions.filter(q=>(!settings.lesson || q.lesson===Number(settings.lesson)) && (!settings.topic || q.topic===settings.topic) && (!settings.type || q.type===settings.type) && (!settings.architecture || q.architecture===settings.architecture) && (!settings.collection || q.collection===settings.collection) && (!settings.card || q.codeCard===settings.card));
     if (settings.mode==='errors') pool=pool.filter(q=>records[q.id] && records[q.id].score<1);
     if (settings.mode==='saved') pool=pool.filter(q=>bookmarks.includes(q.id));
     if (settings.mode==='due') pool=pool.filter(q=>records[q.id] && records[q.id].due<=Date.now());
     pool=shuffle(pool,random);
     // Interleave lessons so a short mixed ticket covers the course, not just a lucky sample.
     if (!settings.lesson) {
-      const groups=[1,2,3,4,5].map(n=>pool.filter(q=>q.lesson===n)); pool=[];
+      const groups=[...new Set(pool.map(q=>q.lesson))].sort((a,b)=>a-b).map(n=>pool.filter(q=>q.lesson===n)); pool=[];
       while(groups.some(g=>g.length)) for (const g of groups) if(g.length) pool.push(g.pop());
     }
     return pool.slice(0,settings.count==='all' ? pool.length : Number(settings.count || 10));
