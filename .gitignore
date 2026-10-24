@@ -24,3 +24,15 @@ node_modules/
 .firebase/
 firebase-debug.log*
 gha-creds-*.json
+
+# Local teaching experiments (never publish logs, databases or model artifacts).
+lightning_logs/
+logs/
+runs/
+mlruns/
+checkpoints/
+*.ckpt
+*.db
+*.db-shm
+*.db-wal
+events.out.tfevents.*

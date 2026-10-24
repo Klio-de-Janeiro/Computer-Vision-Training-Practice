@@ -140,3 +140,9 @@ body.reading-page.reading-right-hidden #theory-side{display:none}
 
 .diagram-viewport.expanded{max-height:none}
 .diagram-controls{margin:12px 0}
+.tools-flow{display:flex;gap:18px;align-items:center;margin:28px 0;padding:20px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+.tools-flow>div{flex:1;min-width:0}.tools-flow strong,.tools-flow span{display:block;line-height:1.8}.tools-flow>div>span{font-size:12px;color:var(--muted)}
+.tool-guide{margin:26px 0}.tool-guide h2{font-size:30px}.tool-guide .lead{font-size:16px}.tool-guide li{line-height:1.9}
+.tool-path{padding-left:25px}.tool-path>li{padding:12px 0 18px 8px;border-bottom:1px solid var(--line)}.tool-path p{margin:7px 0}.tool-setup{border:1px solid var(--line);padding:16px;border-radius:7px}.tool-setup summary{cursor:pointer;color:var(--green);font-size:13px}
+.tool-setup pre,.question-setup{overflow:auto;max-width:100%;background:var(--paper);padding:16px;border:1px solid var(--line);border-radius:7px;font:12px/1.8 Consolas,monospace}
+@media(max-width:740px){.tools-flow{flex-direction:column;align-items:stretch}.tools-flow>span{transform:rotate(90deg);text-align:center}.tool-guide{padding:18px}.tool-guide h2{font-size:26px}.tool-path{padding-left:19px}.tool-path>li{padding-left:0}}

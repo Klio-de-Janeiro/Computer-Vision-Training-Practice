@@ -5,6 +5,7 @@ import argparse
 import ast
 from collections import Counter
 from pathlib import Path
+from urllib.parse import urlparse
 
 app=Path(__file__).resolve().parents[1]
 data=runpy.run_path(str(app/'tools/content.py'))
@@ -21,7 +22,13 @@ implementations=[{'id':'code-'+t['id'],'source':t['implementation']['source']} f
 diagrams=data['DIAGRAMS']
 walkthroughs=[{'id':'walkthrough-'+t['id'],'source':t['walkthrough']['source']} for t in topics]
 for item in [*topics,*questions,*implementations,*diagrams,*walkthroughs]:
-    source=item['source']; path=course/source['path']
+    source=item['source']
+    if source.get('url'):
+        url=urlparse(source['url'])
+        assert url.scheme=='https' and url.hostname in {'lightning.ai','docs.pytorch.org','www.tensorflow.org','mlflow.org'}, item['id']
+        assert source['title'] and source['checked']=='2026-10-24'
+        continue
+    path=course/source['path']
     if not course.is_dir():
         assert source['cells'] and all(isinstance(n,int) and n>=1 for n in source['cells'])
         continue
@@ -53,7 +60,10 @@ print('Content checks passed:',len(topics),'topics,',len(questions),'questions')
 for t in topics:
     w=t['walkthrough']
     assert w['given'] and w['title'] and w['conclusion'] and len(w['steps'])>=3,t['id']
-    assert w['source']['path']==t['source']['path'] and set(t['source']['cells']).issubset(w['source']['cells']),t['id']
+    if t['source'].get('url'):
+        assert w['source']==t['source'] and t['extension']=='tooling',t['id']
+    else:
+        assert w['source']['path']==t['source']['path'] and set(t['source']['cells']).issubset(w['source']['cells']),t['id']
     assert all(s['title'] and s['text'].strip() for s in w['steps']),t['id']
     prose=[w['given'],w['conclusion'],*[s['text'] for s in w['steps']]]
     assert not any(ord(c)<32 and c not in '\n\r\t' for text in prose for c in text),t['id']
@@ -90,7 +100,7 @@ assert len({c['id'] for c in cards})==len(cards) and len(cards)>=100
 for c in cards:
     ast.parse(c['setup']+'\n'+c['code']+'\n'+c['test'],filename=c['id'])
     assert all(k in ids for k in c['topics']) and c['result'] and c['explanation'] and c['trap']
-    assert c['runtime'] in ['cpu','external'] and (c['test'] or c['runtime']=='external')
+    assert c['runtime'] in ['cpu','external','tooling'] and (c['test'] or c['runtime']=='external')
 assert all(t['codeCards'] for t in topics)
 print('Additional API cells:',len(cards),'with theory links, explanations and practice questions')
 print('By lesson:',dict(Counter(q['lesson'] for q in questions)))

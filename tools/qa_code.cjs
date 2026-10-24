@@ -5,9 +5,9 @@ assert.ok(data.codeCards.length>=100);assert.equal(new Set(data.codeCards.map(c=
 for(const c of data.codeCards){
  assert.ok(c.prompt&&c.code&&c.result&&c.explanation&&c.trap&&c.doc.startsWith('https://'));
  assert.ok(c.runtime!=='cpu'||c.test.trim());
- assert.equal(C.select(data.questions,{collection:'code',card:c.id,count:'all'},{},[]).length,1,c.id);
+ assert.equal(C.select(data.questions,{collection:c.collection||'code',card:c.id,count:'all'},{},[]).length,1,c.id);
 }
-assert.equal(C.select(data.questions,{collection:'code',count:'all'},{},[]).length,data.codeCards.length);
+assert.equal(C.select(data.questions,{collection:'code',count:'all'},{},[]).length,data.codeCards.filter(c=>c.collection!=='tooling').length);
 assert.ok(C.select(data.questions,{lesson:6,count:'all'},{},[]).length>=50);
 for(const t of data.topics)assert.ok(t.codeCards.length,t.id);
 console.log('Code bank integrity passed:',data.codeCards.length,'cards; all topics have extra code; 6 lessons selectable.');
@@ -40,7 +40,7 @@ const server=http.createServer((req,res)=>{
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,c.id);
    }
   }
-  await page.locator('[data-copy-card]').click();assert.ok((await page.evaluate(()=>window.copied)).includes('model.export'));
+  await page.locator('[data-copy-card]').click();assert.ok((await page.evaluate(()=>window.copied)).includes(data.codeCards.at(-1).code));
   await go('#code?library=NumPy&q=reshape');assert.ok(await page.locator('#code-picker option').count()>0);
   await go('#practice?collection=code&card=pt-tril&count=all');
   assert.match(await page.locator('#pool-size').textContent(),/1/);await page.locator('#practice-form button[type=submit]').click();await page.locator('#answer-form').waitFor();

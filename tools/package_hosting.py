@@ -7,7 +7,7 @@ import subprocess
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC_FILES = {
     "index.html", "app.js", "content.js", "core.js", "diagrams.js",
-    "sources.js", "style.css", "themes.css", "themes.js", "study.js", "code-practice.js",
+    "sources.js", "style.css", "themes.css", "themes.js", "study.js", "code-practice.js", "training-tools.js",
 }
 
 

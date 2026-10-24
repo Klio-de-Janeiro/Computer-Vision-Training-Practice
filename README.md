@@ -1,12 +1,22 @@
 # Computer Vision Training Practice · CV Практикум
 
-Локальное приложение для подготовки к экзамену по шести урокам компьютерного зрения МФТИ. 87 конспектов, 678 вопросов и три цветовые темы.
+Локальное приложение для подготовки к экзамену по шести урокам компьютерного зрения МФТИ. 87 конспектов курса и 18 дополнительных тем по Lightning, TensorBoard и MLflow; всего 772 вопроса, 153 ячейки API и три цветовые темы.
 
 Онлайн-версия: **[cv-training.web.app](https://cv-training.web.app)**.
 
 ## Firebase и GitHub
 
-Сайт опубликован на Firebase Hosting. Push в `main` автоматически обновляет его после успешных jobs `check` и `examples` в GitHub Actions. Для pull request выполняются проверки. Настройки: `firebase.json`, `.firebaserc` и `.github/workflows/check.yml`.
+Сайт опубликован на Firebase Hosting. Push в `main` автоматически обновляет его после успешных jobs `check`, `examples` и `training-tools` в GitHub Actions. Для pull request выполняются проверки. Настройки: `firebase.json`, `.firebaserc` и `.github/workflows/check.yml`.
+
+## Lightning, TensorBoard и MLflow
+
+Раздел **[«Инструменты обучения»](https://cv-training.web.app/#tools)** содержит по шесть тем каждого инструмента, порядок изучения, предпосылки, мини-проект и критерии готовности. Это отдельное инженерное дополнение по официальной документации, сверенной 24 октября 2026, вне ноутбуков курса. Источники ведут прямо в документацию. Исходные 678 вопросов и их идентификаторы сохранены.
+
+94 новых вопроса включают расчёты, выбор вариантов, объяснения и 40 коротких задач API. Есть отдельные фильтры библиотеки и набора, эталон с обоснованием, копирование кода и самооценка с сохранением прогресса. Примеры Lightning показывают полный минимальный fit, resume Adam через `ckpt_path`, инференс из checkpoint, агрегацию loss, DataModule, accumulation и callbacks. TensorBoard охватывает event-файлы, scalars, resume, изображения, гистограммы, embeddings, PR и HParams. MLflow — локальный SQLite, lifecycle run, params/tags, историю метрик, artifacts, Model URI, загрузку и поиск запусков.
+
+Проверка кода использует Python 3.12, CPU PyTorch 2.14.1, Lightning 2.6.6, TensorBoard 2.21.0 и MLflow 3.17.2. После установки CPU PyTorch и `tools/training-tools-requirements.txt` запустите `python tools/check_training_tools.py`. Каждый опубликованный пример выполняется в отдельном процессе и временной папке, без скачивания датасетов/весов и обращения к удалённым tracking-серверам. Проверяются реальные event-файлы, SQLite-записи, artifacts, прогноз после загрузки и состояние Adam после resume. Логи и базы исключены из Git/Hosting.
+
+`node tools/qa_tools.cjs --core-only` проверяет структуру нового банка и численные ответы; без флага проверяет интерфейс через Playwright на компьютере и телефоне во всех трёх темах. Формулы входят в общую проверку KaTeX.
 
 GitHub получает временные права через Google Workload Identity Federation: отдельный аккаунт `github-hosting` имеет роли Firebase Hosting Admin и Service Usage Consumer. Вход ограничен числовыми ID этого репозитория и владельца, веткой `main` и событием `push`. Постоянные ключи сервисного аккаунта и Firebase-токены не используются. Проект — `cv-training-practice-mipt`, Hosting target — `practice`, сайт — `cv-training`.
 

@@ -13,6 +13,7 @@ torch.set_num_threads(2)
 for c in data['CODE_CARDS']:
     src=c['setup']+'\n'+c['code']+'\n'+c['test']
     ast.parse(src,filename=c['id'])
+    if c['runtime']=='tooling':continue  # executed with real dependencies by check_training_tools.py
     if c['runtime']!='cpu':external+=1;continue
     assert c['test'].strip(),c['id']
     ns=dict(np=np,torch=torch,nn=nn,F=F)

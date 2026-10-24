@@ -17,7 +17,7 @@ assert.equal(C.grade({type:'multi',correct:[0,1]},{selected:[1,0]}).correct,true
 assert.equal(C.grade({type:'multi',correct:[0,1]},{selected:[0]}).correct,false);
 assert.equal(C.grade(q('rope'),{text:'любые слова'}).auto,false);
 const mixed=C.select(data.questions,{count:15},{},[]);
-const counts=data.lessons.map(l=>mixed.filter(q=>q.lesson===l.id).length);
+const counts=[...new Set(data.questions.map(q=>q.lesson))].map(id=>mixed.filter(q=>q.lesson===id).length);
 assert.equal(counts.reduce((a,b)=>a+b,0),15);assert.ok(Math.max(...counts)-Math.min(...counts)<=1);
 assert.equal(C.select(data.questions,{mode:'errors',count:'all'},{[data.questions[0].id]:{score:0}},[]).length,1);
 assert.throws(()=>C.validImport({version:1,records:{bad:{score:3}}},new Set(['bad']),new Set()));
