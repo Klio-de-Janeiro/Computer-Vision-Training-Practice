@@ -6,6 +6,7 @@ import json
 import re
 import shutil
 from pathlib import Path
+from html.parser import HTMLParser
 
 APP = Path(__file__).resolve().parents[1]
 COURSE = APP.parents[1] / 'cv_course_at_mipt'
@@ -26,7 +27,7 @@ def main():
     paths=list(course.glob('lesson_*/**/*.ipynb'))
     paths += [course/p for p in ['lesson_2/hw/mean-shift.md','lesson_2/hw/seam-carving.md','lesson_5/hw/hw-assignment.md']]
     for path in sorted(paths):
-        if int(path.relative_to(course).parts[0].split('_')[1])>6:continue
+        if int(path.relative_to(course).parts[0].split('_')[1])>7:continue
         document=path.suffix!='.ipynb'
         nb = ({'cells':[{'cell_type':'markdown','source':[path.read_text(encoding='utf-8')]}]} if document else json.loads(path.read_text(encoding='utf-8')))
         rel = path.relative_to(course).as_posix()
@@ -41,18 +42,27 @@ def main():
                         (assets / target).write_bytes(base64.b64decode(''.join(formats[mime])))
                         source = source.replace('attachment:' + name, 'assets/' + target)
                         break
-            def local_image(match):
-                label, url = match.groups()
-                if url.startswith(('http:', 'https:', 'data:', 'assets/' + ident)):
+            def copy_image(label, url):
+                if url.startswith(('http:', 'https:', 'data:', 'assets/')):
                     # External images are not requested at runtime.
-                    return f'[{label or "Внешняя иллюстрация"}]({url})' if url.startswith('http') else match.group()
+                    return f'[{label or "Внешняя иллюстрация"}]({url})' if url.startswith('http') else f'![{label}]({url})'
                 src = (path.parent / url.split('#')[0]).resolve()
                 if src.is_relative_to(course) and src.is_file():
                     target = hashlib.sha256(str(src).encode()).hexdigest()[:16] + src.suffix
                     shutil.copyfile(src, assets / target)
                     return f'![{label}](assets/{target})'
                 return f'*Иллюстрация недоступна в исходных файлах: {label}*'
+            def local_image(match):
+                return copy_image(*match.groups())
+            def html_image(match):
+                class ImageTag(HTMLParser):
+                    def handle_starttag(self, tag, attrs):
+                        if tag.lower()=='img':self.attrs=dict(attrs)
+                parsed=ImageTag();parsed.feed(match.group())
+                attrs=getattr(parsed,'attrs',{})
+                return copy_image(attrs.get('alt') or 'Иллюстрация',attrs.get('src') or '')
             if cell['cell_type'] == 'markdown':
+                source = re.sub(r'<img\b[^>]*>', html_image, source, flags=re.IGNORECASE)
                 source = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)', local_image, source)
             images = []
             for out in cell.get('outputs', []):

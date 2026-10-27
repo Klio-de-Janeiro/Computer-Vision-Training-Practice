@@ -641,9 +641,10 @@ runpy.run_path(str(Path(__file__).with_name('diagram_walkthroughs.py')))['extend
 runpy.run_path(str(Path(__file__).with_name('practical_topics.py')))['extend'](LESSONS,TOPICS,QUESTIONS)
 CODE_CARDS=runpy.run_path(str(Path(__file__).with_name('code_bank.py')))['build'](TOPICS,QUESTIONS)
 TOOL_GUIDES=runpy.run_path(str(Path(__file__).with_name('training_tools.py')))['extend'](TOPICS,QUESTIONS,CODE_CARDS)
+COURSE_UPDATE=runpy.run_path(str(Path(__file__).with_name('lesson7.py')))['extend'](LESSONS,TOPICS,QUESTIONS,CODE_CARDS,DIAGRAMS,CORRECTIONS)
 
 if __name__ == '__main__':
     app=Path(__file__).resolve().parents[1]
-    payload={'version':1,'snapshotDate':'2026-10-24','lessons':LESSONS,'topics':TOPICS,'questions':QUESTIONS,'corrections':CORRECTIONS,'architectures':ARCHITECTURES,'diagrams':DIAGRAMS,'codeCards':CODE_CARDS,'toolGuides':TOOL_GUIDES}
+    payload={'version':1,'snapshotDate':'2026-10-28','lessons':LESSONS,'topics':TOPICS,'questions':QUESTIONS,'corrections':CORRECTIONS,'architectures':ARCHITECTURES,'diagrams':DIAGRAMS,'codeCards':CODE_CARDS,'toolGuides':TOOL_GUIDES,'courseUpdate':COURSE_UPDATE}
     (app/'dist'/'content.js').write_text('window.CV_CONTENT = '+json.dumps(payload,ensure_ascii=False)+';\n',encoding='utf-8',newline='\n')
     print(f'{len(TOPICS)} study topics, {len(QUESTIONS)} questions')

@@ -1,5 +1,6 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'../dist'),box={window:{}};vm.runInNewContext(fs.readFileSync(path.join(root,'content.js'),'utf8'),box);
+vm.runInNewContext(fs.readFileSync(path.join(root,'sources.js'),'utf8'),box);
 const data=box.window.CV_CONTENT,C=require('../dist/core.js');
 assert.ok(data.codeCards.length>=100);assert.equal(new Set(data.codeCards.map(c=>c.id)).size,data.codeCards.length);
 for(const c of data.codeCards){
@@ -10,7 +11,7 @@ for(const c of data.codeCards){
 assert.equal(C.select(data.questions,{collection:'code',count:'all'},{},[]).length,data.codeCards.filter(c=>c.collection!=='tooling').length);
 assert.ok(C.select(data.questions,{lesson:6,count:'all'},{},[]).length>=50);
 for(const t of data.topics)assert.ok(t.codeCards.length,t.id);
-console.log('Code bank integrity passed:',data.codeCards.length,'cards; all topics have extra code; 6 lessons selectable.');
+console.log('Code bank integrity passed:',data.codeCards.length,`cards; all topics have extra code; ${data.lessons.length} lessons selectable.`);
 if(process.argv.includes('--core-only'))process.exit(0);
 const {chromium}=require(process.argv[2]||'playwright');
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.woff2':'font/woff2'};
@@ -28,7 +29,7 @@ const server=http.createServer((req,res)=>{
   await context.addInitScript(()=>Object.defineProperty(navigator,'clipboard',{value:{writeText:async x=>window.copied=x}}));
   page.on('pageerror',e=>errors.push(e.message));
   await context.route('**/*',r=>{const u=r.request().url();if(!u.startsWith(base+'/')&&!/^(data:|blob:)/.test(u)){errors.push('External request '+u);return r.abort();}return r.continue();});
-  await page.goto(base+'/');await page.locator('.lesson-card').first().waitFor();assert.equal(await page.locator('.lesson-card').count(),6);
+  await page.goto(base+'/');await page.locator('.lesson-card').first().waitFor();assert.equal(await page.locator('.lesson-card').count(),data.lessons.length);
   const go=async h=>{await page.evaluate(h=>location.hash=h,h);await page.waitForTimeout(45);};
   for(const width of [1440,390]){
    await page.setViewportSize({width,height:1000});
@@ -48,7 +49,7 @@ const server=http.createServer((req,res)=>{
   await page.locator('#answer-text').fill('torch.tril(torch.ones(T,T,dtype=torch.bool))');await page.locator('#answer-form button[type=submit]').click();await page.locator('.feedback').waitFor();
   assert.ok(await page.locator('.feedback pre code').count()>0);await page.locator('[data-rate="1"]').click();
   const saved=await page.evaluate(()=>JSON.parse(JSON.stringify(state.records)));await page.reload();await page.locator('.feedback').waitFor();assert.deepEqual(await page.evaluate(()=>JSON.parse(JSON.stringify(state.records))),saved);
-  await go('#materials');assert.equal(await page.locator('.panel h2').count(),11);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'Materials mobile overflow');
+  await go('#materials');assert.equal(await page.locator('.panel h2').count(),box.window.CV_SOURCES.filter(s=>/seminar|homework|cv_hw|\/hw\//i.test(s.path)).length);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'Materials mobile overflow');
   await go('#theory?lesson=6&topic=sam-prompts');assert.ok(await page.locator('.code-cell').count()>0);assert.equal(await page.locator('.katex-error').count(),0);
   await page.locator('.code-cell>summary').first().click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   await go('#practice?lesson=6&collection=materials&count=all');assert.ok(await page.locator('#pool-size').textContent());

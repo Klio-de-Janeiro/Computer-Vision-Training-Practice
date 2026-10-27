@@ -71,7 +71,7 @@ for t in topics:
     assert t['implementation']['note'].strip(),t['id']
     ast.parse(t['implementation']['code'],filename=t['id']+'.py')
 print('Mathematical notes and Python syntax checked:',len(topics),'examples; worked LaTeX:',sum(q['type']=='number' for q in questions))
-assert len(diagrams)==40 and len({d['id'] for d in diagrams})==len(diagrams)
+assert len(diagrams)>=40 and len({d['id'] for d in diagrams})==len(diagrams)
 for d in diagrams:
     assert d['topic'] in ids and d['summary'].strip()
     nodes={n['id']:n for n in d['nodes']}
