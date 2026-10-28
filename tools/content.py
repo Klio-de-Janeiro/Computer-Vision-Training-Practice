@@ -642,6 +642,7 @@ runpy.run_path(str(Path(__file__).with_name('practical_topics.py')))['extend'](L
 CODE_CARDS=runpy.run_path(str(Path(__file__).with_name('code_bank.py')))['build'](TOPICS,QUESTIONS)
 TOOL_GUIDES=runpy.run_path(str(Path(__file__).with_name('training_tools.py')))['extend'](TOPICS,QUESTIONS,CODE_CARDS)
 COURSE_UPDATE=runpy.run_path(str(Path(__file__).with_name('lesson7.py')))['extend'](LESSONS,TOPICS,QUESTIONS,CODE_CARDS,DIAGRAMS,CORRECTIONS)
+runpy.run_path(str(Path(__file__).with_name('detection_metrics_notes.py')))['extend'](TOPICS,QUESTIONS)
 
 if __name__ == '__main__':
     app=Path(__file__).resolve().parents[1]

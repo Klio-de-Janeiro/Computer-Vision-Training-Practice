@@ -140,6 +140,11 @@ body.reading-page.reading-right-hidden #theory-side{display:none}
 
 .diagram-viewport.expanded{max-height:none}
 .diagram-controls{margin:12px 0}
+.article table{display:block;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;border-collapse:collapse;margin:20px 0;font-size:13px;line-height:1.8}
+.article th,.article td{text-align:left;vertical-align:top;border:1px solid var(--line);padding:10px 12px;min-width:110px}
+.article th{background:var(--paper)}
+.article .katex-display{max-width:100%;overflow-x:auto;overflow-y:hidden;padding:8px 2px}
+.article .katex{position:relative}
 .tools-flow{display:flex;gap:18px;align-items:center;margin:28px 0;padding:20px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
 .tools-flow>div{flex:1;min-width:0}.tools-flow strong,.tools-flow span{display:block;line-height:1.8}.tools-flow>div>span{font-size:12px;color:var(--muted)}
 .tool-guide{margin:26px 0}.tool-guide h2{font-size:30px}.tool-guide .lead{font-size:16px}.tool-guide li{line-height:1.9}
